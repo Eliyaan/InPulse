@@ -27,7 +27,6 @@ fn main() {
 		app.c.close() or { panic(err) }
 	}
 	app.gg = gg.new_context(
-		fullscreen: true
 		create_window: true
 		window_title: '- Application -'
 		user_data: app
@@ -87,7 +86,7 @@ fn on_frame(mut app App) {
 	} else {
 		app.player_nb = app.buf[0]
 		app.gg.begin()
-		app.gg.draw_circle_filled(app.win_width/2, app.win_height/2, 200, couleur(5))
+		app.gg.draw_circle_filled(app.win_width/2, app.win_height/2, 300, couleur(5))
 		mut coords := []f32{}
 		for i in 0 .. (read - 1) / 4 { // pour chaque joueur (code + coos de chaque joueur)
 			mut fourbytes := [4]u8{}
@@ -98,7 +97,7 @@ fn on_frame(mut app App) {
 			coords << unsafe{co.f}
 		}
 		for i in 0 .. coords.len/2 { 
-			app.gg.draw_circle_filled(coords[i * 2] + app.win_width/2, coords[i * 2 + 1] + app.win_height/2, 10, couleur(i))
+			app.gg.draw_circle_filled(coords[i * 2] + app.win_width/2, coords[i * 2 + 1] + app.win_height/2, 20, couleur(i))
 		}
 		app.gg.end()
 
