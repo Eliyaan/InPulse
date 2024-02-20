@@ -47,18 +47,11 @@ fn main() {
 	eprintln('Listen on ${laddr} ...')
 	mut cs := []net.TcpConn{}
 	mut coords := []f32{}
-	mut new_con := MayCon(false)
 	for {
-		println('Waiting for new game')
-		if new_con is bool {
-			cs = []net.TcpConn{}
-			coords = []f32{}
-		} else {
-			cs = [new_con as net.TcpConn]
-			new_con = false
-			coords = [f32(-128), 0]
-		}
-		for i in cs.len .. 2 {
+		println('_____Waiting for new game___________')
+		cs = []net.TcpConn{}
+		coords = []f32{}
+		for i in 0 .. 2 {
 			println('Waiting for player ${i}')
 			cs << server.accept()!
 			cs[i].write([u8(254)]) or { panic(err) } // in queue
@@ -68,14 +61,16 @@ fn main() {
 				coords << [f32(128), 0]
 				mut buf := []u8{len: 10}
 				cs[0].write([u8(255)]) or { panic(err) } // validation packet
+				println("Waiting for player 0's validation")
 				cs[0].read(mut buf) or {
 					println(err)
-					new_con = cs[1]
+					cs.delete(0)
 					println("Player 0 disconnected")
 					break
 				}
+				println("Player 0 validated")
 				if buf != [u8(101), 0, 0, 0, 0, 0, 0, 0, 0, 0] {
-					new_con = cs[1]
+					cs.delete(0)
 					println("Player 0 disconnected")
 					break
 				}
@@ -84,22 +79,27 @@ fn main() {
 			}
 			println('Player ${i} connected')
 		}
-		if new_con is bool {
-			mut buf := []u8{len: 10}
+		mut buf := []u8{len: 10}
+		if cs.len == 2 {
 			cs[1].write([u8(255)]) or { panic(err) } // validation packet
+			println("Waiting for player 1's validation")
 			cs[1].read(mut buf) or { 
 				println(err)
-				new_con = cs[0]
+				cs.delete(1)
 				println("Player 1 disconnected")	
 			}
-			if buf != [u8(101), 0, 0, 0, 0, 0, 0, 0, 0, 0] {
-				new_con = cs[0]
-				println("Player 1 disconnected")
-				break
+			if cs.len == 2 {
+				println("Player 1 validated")
 			}
 		}
-		if new_con is bool {
-			spawn game(cs, coords)
+		if cs.len == 2 {
+			if buf != [u8(101), 0, 0, 0, 0, 0, 0, 0, 0, 0] {
+				cs.delete(1)
+				println("Player 1 disconnected")
+			}
+			if cs.len == 2 {
+				spawn game(cs, coords)
+			}
 		}
 	}
 }

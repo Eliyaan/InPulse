@@ -1,6 +1,7 @@
 import net
 import gg
 import os
+import time
 
 const img = false
 const bg_color = gg.Color{222, 222, 222, 255}
@@ -59,7 +60,6 @@ fn on_frame(mut app App) {
 	app.win_height = size.height
 	app.win_width = size.width
 	if app.first_frame > 0 {
-		println("done")
 		app.first_frame -= 1
 		app.gg.begin()
 		app.gg.draw_circle_filled(app.win_width/2, app.win_height/2, 300, couleur(5))
@@ -81,6 +81,7 @@ fn on_frame(mut app App) {
 				println('Timed out')
 				app.game = false
 				app.first_frame = 5
+				app.c.close() or {panic(err)}
 				return
 			}
 			if app.buf[0] == 255 {
@@ -133,17 +134,22 @@ fn on_frame(mut app App) {
 					println('connection closed write')
 					app.game = false
 					app.first_frame = 5
+					app.c.close() or {panic(err)}
 				}
 			}
 		}
 		app.gg.end()
 		if !app.game {
+			println("Attempt connection")
 			app.c = net.dial_tcp(ip) or { panic(err) }
+			app.c.set_read_timeout(2 * time.second)
 			app.game = true
 			// lancement du programme/de la fenêtre
 			app.c.read(mut app.buf) or {
 				println('Timed out')
-				app.gg.quit()
+				app.game = false
+				app.first_frame = 5
+				app.c.close() or {panic(err)}
 				return
 			}
 			if app.buf[0] == 254 {
@@ -154,7 +160,9 @@ fn on_frame(mut app App) {
 			println("Waiting for validation")
 			app.c.read(mut app.buf) or {
 				println('Timed out')
-				app.gg.quit()
+				app.game = false
+				app.first_frame = 5
+				app.c.close() or {panic(err)}
 				return
 			}
 			if app.buf[0] == 255 {
@@ -164,6 +172,9 @@ fn on_frame(mut app App) {
 			}
 			app.c.write([u8(101)]) or {
 				println('Connection closed write')
+				app.game = false
+				app.first_frame = 5
+				app.c.close() or {panic(err)}
 				return
 			}
 		}
