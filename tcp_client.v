@@ -117,8 +117,8 @@ fn on_frame(mut app App) {
 					app.gg.draw_circle_filled(coords[i * 2] + app.win_width/2, coords[i * 2 + 1] + app.win_height/2, 20, couleur(i))
 				}
 				if img {
-					app.gg.draw_image(coords[0] + app.win_width/2 - 20, coords[1] + app.win_height/2 - 20, 40, 40, app.white_ball)
-					app.gg.draw_image(coords[2] + app.win_width/2 - 20, coords[3] + app.win_height/2 - 20, 40, 40, app.black_ball)
+					app.gg.draw_image(coords[(0 + app.player_nb*2)%4] + app.win_width/2 - 20, coords[(1 + app.player_nb*2)%4] + app.win_height/2 - 20, 40, 40, app.white_ball)
+					app.gg.draw_image(coords[(2 + app.player_nb*2)%4] + app.win_width/2 - 20, coords[(3 + app.player_nb*2)%4] + app.win_height/2 - 20, 40, 40, app.black_ball)
 				}
 
 				mut packet := []u8{}
