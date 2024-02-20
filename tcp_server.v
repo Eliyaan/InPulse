@@ -74,7 +74,11 @@ fn main() {
 					println("Player 0 disconnected")
 					break
 				}
-				assert buf == [u8(101), 0, 0, 0, 0, 0, 0, 0, 0, 0]
+				if buf != [u8(101), 0, 0, 0, 0, 0, 0, 0, 0, 0] {
+					new_con = cs[1]
+					println("Player 0 disconnected")
+					break
+				}
 			} else {
 				panic('strange i=${i}')
 			}
@@ -88,7 +92,11 @@ fn main() {
 				new_con = cs[0]
 				println("Player 1 disconnected")	
 			}
-			assert buf == [u8(101), 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			if buf != [u8(101), 0, 0, 0, 0, 0, 0, 0, 0, 0] {
+				new_con = cs[0]
+				println("Player 1 disconnected")
+				break
+			}
 		}
 		if new_con is bool {
 			spawn game(cs, coords)
@@ -178,6 +186,7 @@ fn game(connections []net.TcpConn, coordinates []f32) {
 			}
 		}
 	}
+	println("Game ended")
 }
 
 fn solve_coll(mut p1 Player, mut p2 Player) {
