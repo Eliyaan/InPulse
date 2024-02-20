@@ -3,9 +3,9 @@ import gg
 import os
 import time
 
-const img = false
+const img = true
 const bg_color = gg.Color{222, 222, 222, 255}
-const ip = '0.0.0.0:40001' // 93.23.129.134
+const ip = '93.23.129.134:40001' // 93.23.129.134
 
 
 union Fbytes {
