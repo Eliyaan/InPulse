@@ -68,7 +68,8 @@ fn on_frame(mut app App) {
 			app.gg.draw_circle_filled(coords[i] + app.win_width/2, app.win_height/2, 20, couleur(i))
 		}
 		if img {
-			app.gg.draw_image(- 128 - 20, app.win_height/2 - 20, 40, 40, app.white_ball)
+			app.gg.draw_image(app.win_width/2 - 370, app.win_height/2 - 370, 740, 740, app.field)
+			app.gg.draw_image(- 128 + app.win_width/2 - 20, app.win_height/2 - 20, 40, 40, app.white_ball)
 			app.gg.draw_image(128 + app.win_width/2 - 20, app.win_height/2 - 20, 40, 40, app.black_ball)
 		}
 		app.gg.end()
